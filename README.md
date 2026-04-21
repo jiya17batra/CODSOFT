@@ -5,5 +5,10 @@ A basic yet creative HTML and CSS project designed to practice layout structurin
 
 🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task1/
 # Task 2
+Calculator Web App
+An interactive calculator built using HTML, CSS, and JavaScript that performs basic arithmetic operations with a clean and responsive design.
+It includes a Dark/Light mode toggle, fun Gen-Z style code comments, and a playful sound effect on the "=" button for a more engaging user experience.
+
+🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task2/
 # Task 3
 # Task 4
