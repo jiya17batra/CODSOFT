@@ -1,5 +1,5 @@
 # View 
-https://jiya17batra.github.io/CODSOFT/Task1/
+https://jiya17batra.github.io/CODSOFT/Task1/index.html
 
 # LEVEL 1 TASK 1
 
