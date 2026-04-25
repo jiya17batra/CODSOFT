@@ -21,4 +21,7 @@ An interactive platform that allows users to create quizzes with multiple-choice
 
 🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task4/index.html
 # Task 5
+E-Commerce Website
+A full-stack e-commerce platform built using React, Node.js, and MongoDB where users can browse products, filter items, add to cart, and complete secure checkout. It includes user authentication, dynamic product management, shopping cart functionality, and payment integration with a fully responsive modern design.
+
 🔗 View Project: https://jiya17batra.github.io/CODSOFT/Task5/index.html
