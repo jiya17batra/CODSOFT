@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beadify – Design Your Bracelet</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lavender: #e8e0f5;
+  --purple: #7c4dbd;
+  --purple-dark: #5a35a0;
+  --purple-light: #c4a8f0;
+  --pink: #f0a0c0;
+  --gold: #d4a843;
+  --cream: #fdf8ff;
+  --text: #2d1b4e;
+  --text-light: #7a6a9a;
+  --white: #ffffff;
+  --shadow: 0 8px 32px rgba(124,77,189,0.12);
+  --shadow-lg: 0 20px 60px rgba(124,77,189,0.2);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── TOP BANNER ── */
+.banner {
+  background: linear-gradient(90deg, #c4a8f0, #f0a0c0, #c4a8f0);
+  background-size: 200%;
+  animation: shimmer 4s linear infinite;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: var(--purple-dark);
+}
+@keyframes shimmer { 0%{background-position:0%} 100%{background-position:200%} }
+
+/* ── NAV ── */
+nav {
+  background: white;
+  box-shadow: 0 2px 20px rgba(124,77,189,0.08);
+  position: sticky; top:0; z-index:100;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 14px 40px;
+}
+.logo { display:flex; align-items:center; gap:10px; }
+.logo-icon { font-size:28px; }
+.logo-text { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--purple); }
+.logo-sub { font-size:11px; color:var(--text-light); letter-spacing:2px; margin-top:-4px; }
+.nav-links { display:flex; gap:32px; }
+.nav-links a { text-decoration:none; color:var(--text-light); font-size:14px; font-weight:500; transition:.2s; }
+.nav-links a:hover, .nav-links a.active { color:var(--purple); }
+.nav-links a.active { border-bottom:2px solid var(--purple); padding-bottom:2px; }
+.nav-icons { display:flex; align-items:center; gap:16px; }
+.nav-icons button { background:none; border:none; cursor:pointer; font-size:20px; color:var(--text-light); position:relative; transition:.2s; }
+.nav-icons button:hover { color:var(--purple); transform:scale(1.1); }
+.cart-count {
+  position:absolute; top:-6px; right:-6px;
+  background:var(--purple); color:white;
+  font-size:10px; width:18px; height:18px;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-weight:700;
+}
+.user-btn { display:flex; align-items:center; gap:8px; background:var(--lavender)!important; padding:6px 14px!important; border-radius:30px!important; font-size:13px!important; color:var(--purple)!important; }
+
+/* ── MAIN LAYOUT ── */
+.main { display:grid; grid-template-columns:320px 1fr 300px; gap:0; min-height:calc(100vh - 120px); }
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  background:white;
+  border-right:1px solid #f0e8ff;
+  padding:24px 20px;
+  overflow-y:auto;
+  max-height:calc(100vh - 60px);
+  position:sticky; top:60px;
+}
+.panel-title { font-size:18px; font-weight:600; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+.filter-btn { background:none; border:1px solid #e0d0f5; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; color:var(--purple); display:flex; align-items:center; gap:4px; }
+.filter-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.filter-tab {
+  padding:6px 16px; border-radius:20px; border:1.5px solid #e0d0f5;
+  font-size:13px; cursor:pointer; background:white; color:var(--text-light);
+  transition:.2s; font-weight:500;
+}
+.filter-tab.active { background:var(--purple); color:white; border-color:var(--purple); }
+.color-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.color-dot {
+  width:28px; height:28px; border-radius:50%; cursor:pointer;
+  transition:.2s; border:2px solid transparent;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
+.color-dot.active { border-color:var(--purple); transform:scale(1.2); }
+.color-dot:hover { transform:scale(1.15); }
+
+.beads-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.bead-card {
+  border:1.5px solid #f0e8ff; border-radius:var(--radius-sm); padding:12px 8px;
+  text-align:center; cursor:pointer; transition:.25s; background:white;
+  position:relative; overflow:hidden;
+}
+.bead-card:hover { border-color:var(--purple); transform:translateY(-3px); box-shadow:var(--shadow); }
+.bead-card.selected { border-color:var(--purple); background:#f8f3ff; }
+.bead-card::after {
+  content:'✓'; position:absolute; top:6px; right:6px;
+  background:var(--purple); color:white; width:18px; height:18px;
+  border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:.2s;
+}
+.bead-card.selected::after { opacity:1; }
+.bead-visual {
+  width:52px; height:52px; border-radius:50%; margin:0 auto 8px;
+  position:relative; display:flex; align-items:center; justify-content:center;
+}
+.bead-name { font-size:11px; font-weight:600; color:var(--text); }
+.bead-price { font-size:11px; color:var(--purple); font-weight:700; margin-top:2px; }
+
+.section-title { font-size:15px; font-weight:600; margin:20px 0 12px; color:var(--text); }
+.charms-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.charm-card {
+  border:1.5px solid #f0e8ff; border-radius:var(--radius-sm); padding:10px 6px;
+  text-align:center; cursor:pointer; transition:.25s; background:white;
+}
+.charm-card:hover { border-color:var(--gold); transform:translateY(-2px); box-shadow:var(--shadow); }
+.charm-card.selected { border-color:var(--gold); background:#fffaf0; }
+.charm-emoji { font-size:24px; margin-bottom:4px; }
+.charm-name { font-size:10px; font-weight:600; }
+.charm-price { font-size:10px; color:var(--gold); font-weight:700; }
+
+.strings-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.string-item {
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+  border:1.5px solid #f0e8ff; border-radius:var(--radius-sm); cursor:pointer; transition:.2s;
+}
+.string-item:hover { border-color:var(--purple); }
+.string-item.selected { border-color:var(--purple); background:#f8f3ff; }
+.string-swatch { width:32px; height:8px; border-radius:4px; }
+.string-info { flex:1; }
+.string-name { font-size:12px; font-weight:600; }
+.string-price { font-size:11px; color:var(--purple); }
+
+/* ── CENTER PANEL ── */
+.center-panel { padding:30px 40px; display:flex; flex-direction:column; align-items:center; }
+.design-header { text-align:center; margin-bottom:28px; }
+.design-header h1 { font-family:'Playfair Display',serif; font-size:36px; font-weight:700; }
+.design-header p { color:var(--text-light); margin-top:6px; }
+.design-subtitle-heart { color:var(--pink); }
+
+/* BRACELET CANVAS */
+.bracelet-wrapper {
+  width:440px; height:440px; position:relative;
+  display:flex; align-items:center; justify-content:center;
+}
+.bracelet-bg {
+  position:absolute; width:360px; height:360px;
+  border-radius:50%; background:radial-gradient(circle at 40% 35%, #fdf8ff, #f0e8ff 60%, #e0d0f5);
+  box-shadow: inset 0 4px 20px rgba(124,77,189,0.08), 0 10px 40px rgba(124,77,189,0.15);
+}
+#bracelet-svg {
+  position:relative; width:440px; height:440px;
+  filter: drop-shadow(0 10px 30px rgba(124,77,189,0.2));
+}
+.bracelet-label {
+  text-align:center; font-size:14px; color:var(--text-light);
+  margin-top:10px; font-style:italic;
+}
+.bracelet-label.wow { color:var(--purple); font-style:normal; font-weight:600; font-size:15px; }
+
+/* FLYING BEAD ANIMATION */
+.flying-bead {
+  position:fixed; border-radius:50%; pointer-events:none; z-index:9999;
+  transition:none; box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* BEAD SEQUENCE */
+.sequence-container { width:100%; margin-top:20px; }
+.sequence-label { font-size:14px; font-weight:600; margin-bottom:10px; }
+.sequence-row {
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  min-height:60px; background:#f8f5ff; border-radius:16px;
+  padding:10px 14px; border:2px dashed #d0b8f0;
+}
+.seq-bead {
+  width:44px; height:44px; border-radius:50%; cursor:pointer;
+  position:relative; flex-shrink:0;
+  transition:transform .2s;
+  animation: dropIn .3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes dropIn { from{opacity:0;transform:scale(0)} to{opacity:1;transform:scale(1)} }
+.seq-bead:hover { transform:scale(1.15); }
+.seq-bead .remove-x {
+  display:none; position:absolute; top:-4px; right:-4px;
+  width:16px; height:16px; border-radius:50%; background:#ff4466; color:white;
+  font-size:9px; align-items:center; justify-content:center;
+  box-shadow:0 2px 6px rgba(255,68,102,0.4);
+}
+.seq-bead:hover .remove-x { display:flex; }
+.seq-add {
+  width:44px; height:44px; border-radius:50%; background:white;
+  border:2px dashed #c4a8f0; display:flex; align-items:center; justify-content:center;
+  font-size:22px; color:#c4a8f0; cursor:pointer; transition:.2s; flex-shrink:0;
+}
+.seq-add:hover { border-color:var(--purple); color:var(--purple); transform:scale(1.1); }
+.tip-text { font-size:12px; color:var(--text-light); margin-top:8px; display:flex; align-items:center; gap:4px; }
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  background:white; border-left:1px solid #f0e8ff;
+  padding:24px 20px; overflow-y:auto;
+  max-height:calc(100vh - 60px);
+  position:sticky; top:60px;
+}
+.summary-title { font-size:18px; font-weight:700; margin-bottom:18px; }
+.summary-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f0ff; }
+.summary-item:last-of-type { border-bottom:none; }
+.summary-name { font-size:13px; color:var(--text-light); }
+.summary-price { font-size:14px; font-weight:600; color:var(--text); }
+.total-row { display:flex; justify-content:space-between; align-items:center; padding:14px 0; margin-top:4px; }
+.total-label { font-size:16px; font-weight:700; }
+.total-price { font-size:22px; font-weight:700; color:var(--purple); }
+
+.btn-cart {
+  width:100%; padding:16px; background:var(--purple);
+  color:white; border:none; border-radius:14px; font-size:15px;
+  font-weight:600; cursor:pointer; margin-top:12px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:.25s; font-family:'DM Sans',sans-serif;
+  box-shadow:0 6px 20px rgba(124,77,189,0.4);
+}
+.btn-cart:hover { background:var(--purple-dark); transform:translateY(-2px); box-shadow:0 10px 28px rgba(124,77,189,0.5); }
+.btn-save {
+  width:100%; padding:14px; background:white;
+  color:var(--purple); border:2px solid var(--purple); border-radius:14px;
+  font-size:14px; font-weight:600; cursor:pointer; margin-top:10px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:.25s; font-family:'DM Sans',sans-serif;
+}
+.btn-save:hover { background:var(--lavender); transform:translateY(-1px); }
+
+.why-section { margin-top:24px; }
+.why-title { font-size:14px; font-weight:700; margin-bottom:12px; }
+.why-item { display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:13px; color:var(--text-light); }
+.why-icon { font-size:18px; }
+
+/* ── BOTTOM FEATURES ── */
+.features {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+  background:white; border-top:1px solid #f0e8ff; margin-top:0;
+}
+.feat-item { padding:24px 28px; display:flex; align-items:center; gap:14px; border-right:1px solid #f0e8ff; }
+.feat-item:last-child { border-right:none; }
+.feat-icon { font-size:32px; }
+.feat-title { font-size:14px; font-weight:600; }
+.feat-sub { font-size:12px; color:var(--text-light); margin-top:2px; }
+
+/* ── PACKING ANIMATION OVERLAY ── */
+#pack-overlay {
+  position:fixed; inset:0; background:rgba(44,18,78,0.88);
+  display:none; align-items:center; justify-content:center;
+  z-index:10000; backdrop-filter:blur(6px);
+}
+#pack-overlay.show { display:flex; }
+.pack-stage {
+  position:relative; width:420px; height:420px;
+  display:flex; align-items:center; justify-content:center;
+}
+.pack-msg {
+  position:absolute; bottom:-60px; width:100%; text-align:center;
+  font-size:20px; font-weight:600; color:white; font-family:'Playfair Display',serif;
+}
+/* BOX ANIMATION */
+.box-wrap { position:relative; width:240px; height:220px; }
+.box-body {
+  position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:220px; height:140px;
+  background:linear-gradient(135deg,#c4a8f0,#9c72d0);
+  border-radius:8px 8px 16px 16px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.4);
+}
+.box-lid {
+  position:absolute; top:0; left:50%; transform:translateX(-50%) rotateX(0deg);
+  width:232px; height:52px;
+  background:linear-gradient(135deg,#d4b8ff,#b090e0);
+  border-radius:10px 10px 0 0;
+  transform-origin:bottom center;
+  transition:transform 1s cubic-bezier(0.34,1.3,0.64,1);
+  box-shadow:0 -4px 16px rgba(0,0,0,0.2);
+}
+.box-lid.open { transform:translateX(-50%) perspective(400px) rotateX(-130deg); }
+.box-ribbon {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:16px; height:100%; background:var(--gold); opacity:0.7;
+}
+.box-ribbon-h {
+  position:absolute; top:50%; left:0; transform:translateY(-50%);
+  width:100%; height:16px; background:var(--gold); opacity:0.7;
+}
+.box-bow {
+  position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+  font-size:28px;
+}
+.bracelet-in-box {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
+  font-size:48px;
+  transition:transform 0.8s cubic-bezier(0.34,1.6,0.64,1) 1.2s;
+}
+.bracelet-in-box.show { transform:translate(-50%,-50%) scale(1); }
+.sparkles { position:absolute; inset:0; pointer-events:none; }
+.sparkle {
+  position:absolute; font-size:20px;
+  animation:sparkle-float 2s ease-out both;
+  opacity:0;
+}
+@keyframes sparkle-float {
+  0%{opacity:0;transform:scale(0) translateY(0)}
+  40%{opacity:1;transform:scale(1.2) translateY(-20px)}
+  100%{opacity:0;transform:scale(0.5) translateY(-60px)}
+}
+.close-overlay {
+  position:absolute; top:20px; right:20px;
+  background:rgba(255,255,255,0.1); border:none; color:white;
+  font-size:22px; width:40px; height:40px; border-radius:50%;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:.2s;
+}
+.close-overlay:hover { background:rgba(255,255,255,0.2); }
+.proceed-btn {
+  position:absolute; bottom:-110px; left:50%; transform:translateX(-50%);
+  background:white; color:var(--purple); border:none; padding:14px 32px;
+  border-radius:30px; font-size:15px; font-weight:700; cursor:pointer;
+  font-family:'DM Sans',sans-serif; box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  transition:.2s; white-space:nowrap;
+}
+.proceed-btn:hover { background:var(--lavender); transform:translateX(-50%) translateY(-2px); }
+
+/* ── BEAD SPHERE STYLES ── */
+.bead-sphere {
+  width:52px; height:52px; border-radius:50%;
+  position:relative; margin:0 auto;
+}
+</style>
+</head>
+<body>
+
+<div class="banner">✨ Handmade with love, just for you! &nbsp; Free delivery on orders above ₹499 ✨</div>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icon">📿</div>
+    <div>
+      <div class="logo-text">Beadify</div>
+      <div class="logo-sub">Design. Create. Wear.</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Shop Beads</a>
+    <a href="#" class="active">Design Your Bracelet</a>
+    <a href="#">Collections</a>
+    <a href="#">About Us</a>
+  </div>
+  <div class="nav-icons">
+    <button title="Search">🔍</button>
+    <button title="Wishlist">🤍</button>
+    <button title="Cart" id="cart-btn" onclick="triggerCartAnimation()">🛍️<span class="cart-count" id="cart-count">0</span></button>
+    <button class="user-btn">👤 Hi, Ananya</button>
+  </div>
+</nav>
+
+<div class="main">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="panel-title">Choose Your Beads <button class="filter-btn">⚙ Filter</button></div>
+
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterBeads('all',this)">All</div>
+      <div class="filter-tab" onclick="filterBeads('glass',this)">Glass</div>
+      <div class="filter-tab" onclick="filterBeads('crystal',this)">Crystal</div>
+      <div class="filter-tab" onclick="filterBeads('stone',this)">Stone</div>
+      <div class="filter-tab" onclick="filterBeads('metal',this)">Metal</div>
+      <div class="filter-tab" onclick="filterBeads('wood',this)">Wood</div>
+      <div class="filter-tab" onclick="filterBeads('pearl',this)">Pearl</div>
+    </div>
+
+    <div class="color-filters" id="color-filters"></div>
+    <div class="beads-grid" id="beads-grid"></div>
+
+    <div class="section-title">✨ Add a Charm</div>
+    <div class="charms-grid" id="charms-grid"></div>
+
+    <div class="section-title">🧵 Choose String</div>
+    <div class="strings-list" id="strings-list"></div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center-panel">
+    <div class="design-header">
+      <h1>Design Your Own Bracelet <span class="design-subtitle-heart">🤍</span></h1>
+      <p>Choose your beads, create your style, and we'll make it real.</p>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;width:100%;max-width:480px;margin-bottom:10px;">
+      <span style="font-weight:600;font-size:15px;">Your Bracelet</span>
+      <span style="display:flex;gap:14px;">
+        <button onclick="clearAll()" style="background:none;border:none;cursor:pointer;color:var(--text-light);font-size:13px;display:flex;align-items:center;gap:4px;">🗑️ Clear All</button>
+        <button onclick="undoLast()" style="background:none;border:none;cursor:pointer;color:var(--text-light);font-size:13px;display:flex;align-items:center;gap:4px;">↩️ Undo</button>
+      </span>
+    </div>
+
+    <div class="bracelet-wrapper">
+      <div class="bracelet-bg"></div>
+      <svg id="bracelet-svg" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bead-shadow">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25"/>
+          </filter>
+        </defs>
+        <!-- string circle -->
+        <circle id="string-circle" cx="220" cy="220" r="140" fill="none" stroke="#d4a843" stroke-width="4" stroke-dasharray="8,4" opacity="0.5"/>
+        <!-- beads group -->
+        <g id="beads-on-bracelet"></g>
+        <!-- charm group -->
+        <g id="charm-on-bracelet"></g>
+        <!-- empty state -->
+        <text id="empty-txt" x="220" y="210" text-anchor="middle" fill="#c4a8f0" font-size="14" font-family="DM Sans">Add beads to start!</text>
+        <text id="empty-txt2" x="220" y="235" text-anchor="middle" fill="#c4a8f0" font-size="13" font-family="DM Sans">← Click a bead from the left</text>
+      </svg>
+    </div>
+    <div class="bracelet-label" id="bracelet-label">Looking beautiful! 💕</div>
+
+    <div class="sequence-container" style="max-width:480px;">
+      <div class="sequence-label">Your Bead Sequence</div>
+      <div class="sequence-row" id="seq-row">
+        <div class="seq-add" onclick="document.querySelector('.beads-grid').scrollIntoView({behavior:'smooth'})">+</div>
+      </div>
+      <div class="tip-text">💡 Tip: Click on a bead to remove it</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="summary-title">Bracelet Summary</div>
+    <div id="summary-items">
+      <div class="summary-item"><span class="summary-name">No beads yet</span><span class="summary-price">₹0</span></div>
+    </div>
+    <div class="total-row">
+      <span class="total-label">Total Price</span>
+      <span class="total-price" id="total-price">₹0</span>
+    </div>
+
+    <button class="btn-cart" onclick="triggerCartAnimation()">🛍️ Add to Cart</button>
+    <button class="btn-save">🤍 Save Design</button>
+
+    <div class="why-section">
+      <div class="why-title">Why You'll Love It</div>
+      <div class="why-item"><span class="why-icon">🤍</span> 100% Handmade</div>
+      <div class="why-item"><span class="why-icon">💎</span> Premium Quality Beads</div>
+      <div class="why-item"><span class="why-icon">✂️</span> Custom made just for you</div>
+      <div class="why-item"><span class="why-icon">🚚</span> Pan India Delivery</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES BAR -->
+<div class="features">
+  <div class="feat-item"><div class="feat-icon">📿</div><div><div class="feat-title">Custom Design</div><div class="feat-sub">You imagine it, we make it.</div></div></div>
+  <div class="feat-item"><div class="feat-icon">💎</div><div><div class="feat-title">Premium Quality</div><div class="feat-sub">Handpicked beads, always.</div></div></div>
+  <div class="feat-item"><div class="feat-icon">🤍</div><div><div class="feat-title">Made with Love</div><div class="feat-sub">Crafted by skilled hands.</div></div></div>
+  <div class="feat-item"><div class="feat-icon">📦</div><div><div class="feat-title">Safe Delivery</div><div class="feat-sub">We deliver with care.</div></div></div>
+</div>
+
+<!-- PACK OVERLAY -->
+<div id="pack-overlay">
+  <button class="close-overlay" onclick="closeOverlay()">✕</button>
+  <div class="pack-stage">
+    <div class="box-wrap" id="box-wrap">
+      <div class="box-lid" id="box-lid">
+        <div class="box-ribbon"></div>
+        <div class="box-bow">🎀</div>
+      </div>
+      <div class="box-body">
+        <div class="box-ribbon"></div>
+        <div class="box-ribbon-h"></div>
+        <div class="bracelet-in-box" id="bracelet-in-box">📿</div>
+      </div>
+    </div>
+    <div class="sparkles" id="sparkles"></div>
+    <div class="pack-msg" id="pack-msg">Your bracelet is being packed!</div>
+    <button class="proceed-btn" id="proceed-btn" style="display:none;" onclick="proceedToCheckout()">🎉 Proceed to Checkout →</button>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────
+const BEADS = [
+  { id:'b1', name:'Pastel Pink', price:5, type:'glass', color:'#f4b8d0', gradient:'radial-gradient(circle at 35% 35%, #ffdde8, #f4b8d0 50%, #d8809a)' },
+  { id:'b2', name:'Ocean Blue', price:5, type:'glass', color:'#7ec8e3', gradient:'radial-gradient(circle at 35% 35%, #c6eaf5, #7ec8e3 50%, #4a9cb8)' },
+  { id:'b3', name:'Mint Green', price:5, type:'glass', color:'#7dd9c0', gradient:'radial-gradient(circle at 35% 35%, #c2f0e4, #7dd9c0 50%, #4ab8a0)' },
+  { id:'b4', name:'Amethyst', price:10, type:'stone', color:'#a87ac8', gradient:'radial-gradient(circle at 35% 35%, #d8b4f0, #a87ac8 50%, #7050a0)' },
+  { id:'b5', name:'Rose Quartz', price:10, type:'stone', color:'#f0b4b4', gradient:'radial-gradient(circle at 35% 35%, #ffe0e0, #f0b4b4 50%, #c88080)' },
+  { id:'b6', name:'Clear Crystal', price:15, type:'crystal', color:'#e8f4f8', gradient:'radial-gradient(circle at 30% 30%, #ffffff, #e8f4f8 40%, #b0d8e8 80%, #8ac0d8)' },
+  { id:'b7', name:'Golden Metal', price:20, type:'metal', color:'#d4a843', gradient:'radial-gradient(circle at 30% 25%, #f0d080, #d4a843 50%, #a07820)' },
+  { id:'b8', name:'Silver Metal', price:15, type:'metal', color:'#c0c8d8', gradient:'radial-gradient(circle at 30% 25%, #e8eef8, #c0c8d8 50%, #8090a8)' },
+  { id:'b9', name:'Pearl White', price:15, type:'pearl', color:'#f4f0e8', gradient:'radial-gradient(circle at 30% 30%, #ffffff, #f4f0e8 50%, #d8d0c0)' },
+  { id:'b10', name:'Lavender', price:5, type:'glass', color:'#c4a8f0', gradient:'radial-gradient(circle at 35% 35%, #ece0ff, #c4a8f0 50%, #9070c8)' },
+  { id:'b11', name:'Coral Red', price:8, type:'glass', color:'#f07860', gradient:'radial-gradient(circle at 35% 35%, #ffc0a8, #f07860 50%, #c04830)' },
+  { id:'b12', name:'Sunny Yellow', price:5, type:'glass', color:'#f4d060', gradient:'radial-gradient(circle at 35% 35%, #fff0a0, #f4d060 50%, #c8a010)' },
+  { id:'b13', name:'Jet Black', price:10, type:'glass', color:'#404050', gradient:'radial-gradient(circle at 30% 30%, #707080, #404050 50%, #101018)' },
+  { id:'b14', name:'Turquoise', price:12, type:'stone', color:'#40c8b8', gradient:'radial-gradient(circle at 35% 35%, #90ece0, #40c8b8 50%, #1890a0)' },
+  { id:'b15', name:'Ruby Red', price:12, type:'stone', color:'#c02040', gradient:'radial-gradient(circle at 35% 35%, #f08090, #c02040 50%, #800020)' },
+  { id:'b16', name:'Sapphire', price:18, type:'crystal', color:'#3050c0', gradient:'radial-gradient(circle at 30% 30%, #8090e8, #3050c0 50%, #102080)' },
+  { id:'b17', name:'Emerald', price:18, type:'crystal', color:'#208040', gradient:'radial-gradient(circle at 30% 30%, #70d090, #208040 50%, #085020)' },
+  { id:'b18', name:'Rose Gold', price:22, type:'metal', color:'#e0a090', gradient:'radial-gradient(circle at 30% 25%, #f8d0c0, #e0a090 50%, #b06050)' },
+  { id:'b19', name:'Ebony Wood', price:8, type:'wood', color:'#604030', gradient:'radial-gradient(circle at 35% 35%, #907060, #604030 50%, #302010)' },
+  { id:'b20', name:'Sandalwood', price:8, type:'wood', color:'#d0a070', gradient:'radial-gradient(circle at 35% 35%, #edd0a0, #d0a070 50%, #a06030)' },
+  { id:'b21', name:'Milky Opal', price:20, type:'crystal', color:'#e8e4f8', gradient:'radial-gradient(circle at 35% 35%, #ffffff, #e8e4f8 40%, #c0b8e0 70%, #f0d8f8)' },
+  { id:'b22', name:'Midnight Blue', price:10, type:'glass', color:'#203060', gradient:'radial-gradient(circle at 30% 30%, #506090, #203060 50%, #081030)' },
+  { id:'b23', name:'Peach Glow', price:7, type:'glass', color:'#f8c098', gradient:'radial-gradient(circle at 35% 35%, #ffe0c0, #f8c098 50%, #d08048)' },
+  { id:'b24', name:'Jade Green', price:14, type:'stone', color:'#508060', gradient:'radial-gradient(circle at 35% 35%, #90c0a0, #508060 50%, #284838)' },
+];
+
+const CHARMS = [
+  { id:'c1', name:'Golden Heart', price:30, emoji:'💛', label:'Heart' },
+  { id:'c2', name:'Silver Star', price:25, emoji:'⭐', label:'Star' },
+  { id:'c3', name:'Moon Charm', price:28, emoji:'🌙', label:'Moon' },
+  { id:'c4', name:'Butterfly', price:35, emoji:'🦋', label:'Butterfly' },
+  { id:'c5', name:'Infinity', price:30, emoji:'♾️', label:'Infinity' },
+  { id:'c6', name:'Crown', price:40, emoji:'👑', label:'Crown' },
+  { id:'c7', name:'Flower', price:25, emoji:'🌸', label:'Flower' },
+  { id:'c8', name:'Leaf', price:20, emoji:'🍃', label:'Leaf' },
+  { id:'c9', name:'Horseshoe', price:32, emoji:'🧲', label:'Lucky' },
+  { id:'c10', name:'Evil Eye', price:38, emoji:'🧿', label:'Evil Eye' },
+  { id:'c11', name:'Diamond', price:45, emoji:'💎', label:'Diamond' },
+  { id:'c12', name:'Key', price:28, emoji:'🗝️', label:'Key' },
+];
+
+const STRINGS = [
+  { id:'s1', name:'Premium Elastic', price:15, color:'#f0e8ff' },
+  { id:'s2', name:'Gold Wire', price:25, color:'#d4a843' },
+  { id:'s3', name:'Silver Wire', price:22, color:'#c0c8d8' },
+  { id:'s4', name:'Rose Gold Wire', price:28, color:'#e0a090' },
+  { id:'s5', name:'Black Cord', price:10, color:'#404050' },
+  { id:'s6', name:'White Thread', price:12, color:'#f4f0e8' },
+];
+
+// ─── STATE ──────────────────────────────────────────────────────
+let selectedBeads = []; // array of bead ids placed on bracelet
+let selectedCharm = null;
+let selectedString = STRINGS[0];
+let cartCount = 0;
+let activeFilter = 'all';
+
+// ─── RENDER LEFT PANEL ──────────────────────────────────────────
+function renderBeadsGrid() {
+  const grid = document.getElementById('beads-grid');
+  const filtered = activeFilter === 'all' ? BEADS : BEADS.filter(b => b.type === activeFilter);
+  grid.innerHTML = filtered.map(b => `
+    <div class="bead-card" id="card-${b.id}" onclick="addBead('${b.id}', event)">
+      <div class="bead-sphere" style="background:${b.gradient}; box-shadow: inset -4px -4px 10px rgba(0,0,0,0.15), inset 2px 2px 6px rgba(255,255,255,0.4), 0 4px 12px rgba(0,0,0,0.15);"></div>
+      <div class="bead-name">${b.name}</div>
+      <div class="bead-price">₹${b.price}</div>
+    </div>
+  `).join('');
+}
+
+function renderCharms() {
+  const grid = document.getElementById('charms-grid');
+  grid.innerHTML = CHARMS.map(c => `
+    <div class="charm-card" id="charm-card-${c.id}" onclick="selectCharm('${c.id}')">
+      <div class="charm-emoji">${c.emoji}</div>
+      <div class="charm-name">${c.label}</div>
+      <div class="charm-price">₹${c.price}</div>
+    </div>
+  `).join('');
+}
+
+function renderStrings() {
+  const list = document.getElementById('strings-list');
+  list.innerHTML = STRINGS.map(s => `
+    <div class="string-item ${selectedString.id === s.id ? 'selected' : ''}" onclick="selectString('${s.id}')">
+      <div class="string-swatch" style="background:${s.color};border:1px solid #ddd;"></div>
+      <div class="string-info">
+        <div class="string-name">${s.name}</div>
+        <div class="string-price">₹${s.price}</div>
+      </div>
+      ${selectedString.id === s.id ? '<span style="color:var(--purple);font-size:16px;">✓</span>' : ''}
+    </div>
+  `).join('');
+}
+
+function renderColorDots() {
+  const colors = [...new Set(BEADS.map(b => b.color))].slice(0, 12);
+  const cont = document.getElementById('color-filters');
+  cont.innerHTML = colors.map(c => `
+    <div class="color-dot" style="background:${c}" onclick=""></div>
+  `).join('');
+}
+
+function filterBeads(type, el) {
+  activeFilter = type;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderBeadsGrid();
+}
+
+// ─── BEAD ACTIONS ────────────────────────────────────────────────
+function getBead(id) { return BEADS.find(b => b.id === id); }
+function getCharm(id) { return CHARMS.find(c => c.id === id); }
+
+function addBead(id, evt) {
+  if (selectedBeads.length >= 24) {
+    showToast('Max 24 beads reached!'); return;
+  }
+  selectedBeads.push(id);
+  flyBeadAnimation(id, evt);
+  updateAll();
+}
+
+function removeBeadAt(idx) {
+  selectedBeads.splice(idx, 1);
+  updateAll();
+}
+
+function undoLast() {
+  if (selectedBeads.length === 0) return;
+  selectedBeads.pop();
+  updateAll();
+}
+
+function clearAll() {
+  selectedBeads = [];
+  selectedCharm = null;
+  document.querySelectorAll('.charm-card').forEach(c => c.classList.remove('selected'));
+  updateAll();
+}
+
+function selectCharm(id) {
+  if (selectedCharm === id) { selectedCharm = null; }
+  else { selectedCharm = id; }
+  document.querySelectorAll('.charm-card').forEach(c => c.classList.remove('selected'));
+  if (selectedCharm) document.getElementById('charm-card-' + selectedCharm).classList.add('selected');
+  updateAll();
+}
+
+function selectString(id) {
+  selectedString = STRINGS.find(s => s.id === id);
+  renderStrings();
+  updateBraceletSVG();
+  updateSummary();
+}
+
+// ─── FLYING BEAD ANIMATION ───────────────────────────────────────
+function flyBeadAnimation(beadId, evt) {
+  const bead = getBead(beadId);
+  const rect = evt ? evt.currentTarget.getBoundingClientRect() : null;
+  if (!rect) { updateAll(); return; }
+
+  const fly = document.createElement('div');
+  fly.className = 'flying-bead';
+  fly.style.cssText = `
+    width:52px; height:52px;
+    background:${bead.gradient};
+    left:${rect.left + rect.width/2 - 26}px;
+    top:${rect.top + rect.height/2 - 26}px;
+    box-shadow: inset -4px -4px 10px rgba(0,0,0,0.15), inset 2px 2px 6px rgba(255,255,255,0.4), 0 6px 16px rgba(0,0,0,0.3);
+  `;
+  document.body.appendChild(fly);
+
+  const svgRect = document.getElementById('bracelet-svg').getBoundingClientRect();
+  const targetX = svgRect.left + svgRect.width / 2 - 26;
+  const targetY = svgRect.top + svgRect.height / 2 - 26;
+
+  const startX = rect.left + rect.width/2 - 26;
+  const startY = rect.top + rect.height/2 - 26;
+
+  const duration = 600;
+  const startTime = performance.now();
+
+  function animate(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+    const curveY = -120 * Math.sin(t * Math.PI);
+    const x = startX + (targetX - startX) * ease;
+    const y = startY + (targetY - startY) * ease + curveY;
+    const scale = 1 - t * 0.4;
+    fly.style.left = x + 'px';
+    fly.style.top = y + 'px';
+    fly.style.transform = `scale(${scale})`;
+    fly.style.opacity = 1 - t * 0.5;
+    if (t < 1) requestAnimationFrame(animate);
+    else { fly.remove(); updateAll(); }
+  }
+  requestAnimationFrame(animate);
+}
+
+// ─── BRACELET SVG ─────────────────────────────────────────────────
+function updateBraceletSVG() {
+  const g = document.getElementById('beads-on-bracelet');
+  const cg = document.getElementById('charm-on-bracelet');
+  const emptyTxt = document.getElementById('empty-txt');
+  const emptyTxt2 = document.getElementById('empty-txt2');
+  const label = document.getElementById('bracelet-label');
+  const stringCircle = document.getElementById('string-circle');
+
+  // update string color
+  stringCircle.setAttribute('stroke', selectedString.color === '#f4f0e8' ? '#c0b8a8' : selectedString.color);
+
+  const total = selectedBeads.length;
+  emptyTxt.style.display = total === 0 ? 'block' : 'none';
+  emptyTxt2.style.display = total === 0 ? 'block' : 'none';
+
+  if (total === 0) { g.innerHTML = ''; cg.innerHTML = ''; label.textContent = 'Add beads to start ✨'; label.className = 'bracelet-label'; return; }
+
+  const cx = 220, cy = 220, r = 140;
+  const angleStep = (2 * Math.PI) / Math.max(total + (selectedCharm ? 1 : 0), total);
+  const startAngle = -Math.PI / 2;
+
+  let svg = '';
+  selectedBeads.forEach((bid, i) => {
+    const bead = getBead(bid);
+    const angle = startAngle + i * (2 * Math.PI) / Math.max(total + (selectedCharm ? 1 : 0), 1);
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    const gradId = `grad-${bid}-${i}`;
+    svg += `
+      <defs>
+        <radialGradient id="${gradId}" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="white" stop-opacity="0.6"/>
+          <stop offset="40%" stop-color="${bead.color}" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="${bead.color}" stop-opacity="0.6" stop-color="${shadeColor(bead.color,-40)}"/>
+        </radialGradient>
+      </defs>
+      <circle cx="${x}" cy="${y}" r="18" fill="${bead.gradient ? bead.color : bead.color}"
+        style="filter:url(#bead-shadow)"
+        fill="url(#${gradId})"
+        class="bracelet-bead"
+      />
+      <circle cx="${x-5}" cy="${y-5}" r="5" fill="white" opacity="0.4"/>
+    `;
+  });
+
+  g.innerHTML = svg;
+
+  // Charm
+  if (selectedCharm) {
+    const charm = getCharm(selectedCharm);
+    const charmAngle = startAngle + total * (2 * Math.PI) / Math.max(total + 1, 1);
+    const cx2 = cx + r * Math.cos(charmAngle);
+    const cy2 = cy + r * Math.sin(charmAngle);
+    cg.innerHTML = `<text x="${cx2}" y="${cy2+8}" text-anchor="middle" font-size="28">${charm.emoji}</text>`;
+  } else {
+    cg.innerHTML = '';
+  }
+
+  const msgs = ['Looking amazing! 💕','So beautiful! ✨','Gorgeous choice! 🌟','Stunning! 💜','Almost there! 🎀'];
+  label.textContent = msgs[Math.min(total - 1, msgs.length - 1)];
+  label.className = total >= 10 ? 'bracelet-label wow' : 'bracelet-label';
+}
+
+function shadeColor(color, amount) {
+  // simple hex shade
+  try {
+    let hex = color.replace('#','');
+    let r = Math.max(0,Math.min(255,parseInt(hex.substr(0,2),16)+amount));
+    let g = Math.max(0,Math.min(255,parseInt(hex.substr(2,2),16)+amount));
+    let b = Math.max(0,Math.min(255,parseInt(hex.substr(4,2),16)+amount));
+    return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+  } catch { return color; }
+}
+
+// ─── SEQUENCE ROW ─────────────────────────────────────────────────
+function updateSequenceRow() {
+  const row = document.getElementById('seq-row');
+  row.innerHTML = selectedBeads.map((bid, i) => {
+    const bead = getBead(bid);
+    return `
+      <div class="seq-bead" style="background:${bead.gradient};box-shadow:inset -2px -2px 6px rgba(0,0,0,0.15),inset 1px 1px 4px rgba(255,255,255,0.4),0 3px 8px rgba(0,0,0,0.15);" onclick="removeBeadAt(${i})">
+        <div class="remove-x">✕</div>
+      </div>
+    `;
+  }).join('') + `<div class="seq-add" onclick="document.querySelector('.beads-grid').scrollIntoView({behavior:'smooth'})">+</div>`;
+}
+
+// ─── SUMMARY ──────────────────────────────────────────────────────
+function updateSummary() {
+  const summaryEl = document.getElementById('summary-items');
+  const totalEl = document.getElementById('total-price');
+
+  const beadCosts = {};
+  let beadTotal = 0;
+  selectedBeads.forEach(bid => {
+    const b = getBead(bid);
+    beadCosts[b.name] = (beadCosts[b.name] || 0) + b.price;
+    beadTotal += b.price;
+  });
+
+  let rows = '';
+  if (selectedBeads.length === 0) {
+    rows = `<div class="summary-item"><span class="summary-name">No beads yet</span><span class="summary-price">₹0</span></div>`;
+  } else {
+    rows = `<div class="summary-item"><span class="summary-name">Beads (${selectedBeads.length})</span><span class="summary-price">₹${beadTotal}</span></div>`;
+  }
+
+  let total = beadTotal + selectedString.price;
+
+  if (selectedCharm) {
+    const c = getCharm(selectedCharm);
+    rows += `<div class="summary-item"><span class="summary-name">${c.name}</span><span class="summary-price">₹${c.price}</span></div>`;
+    total += c.price;
+  }
+
+  rows += `<div class="summary-item"><span class="summary-name">${selectedString.name}</span><span class="summary-price">₹${selectedString.price}</span></div>`;
+
+  summaryEl.innerHTML = rows;
+  totalEl.textContent = '₹' + total;
+}
+
+function updateAll() {
+  updateBraceletSVG();
+  updateSequenceRow();
+  updateSummary();
+}
+
+// ─── CART / PACK ANIMATION ────────────────────────────────────────
+function triggerCartAnimation() {
+  if (selectedBeads.length === 0) {
+    showToast('Add some beads first! 📿'); return;
+  }
+  cartCount++;
+  document.getElementById('cart-count').textContent = cartCount;
+  const overlay = document.getElementById('pack-overlay');
+  overlay.classList.add('show');
+  runPackAnimation();
+}
+
+function runPackAnimation() {
+  const lid = document.getElementById('box-lid');
+  const braceletInBox = document.getElementById('bracelet-in-box');
+  const msg = document.getElementById('pack-msg');
+  const proceed = document.getElementById('proceed-btn');
+  const sparkles = document.getElementById('sparkles');
+
+  // reset
+  lid.classList.remove('open');
+  braceletInBox.classList.remove('show');
+  sparkles.innerHTML = '';
+  proceed.style.display = 'none';
+  msg.textContent = 'Wrapping your bracelet... 🎀';
+
+  setTimeout(() => {
+    lid.classList.add('open');
+    msg.textContent = 'Placing your bracelet inside... 📿';
+  }, 600);
+
+  setTimeout(() => {
+    braceletInBox.classList.add('show');
+    msg.textContent = 'Closing the box... ✨';
+  }, 1800);
+
+  setTimeout(() => {
+    lid.classList.remove('open');
+    msg.textContent = 'Adding finishing touches! 🎁';
+  }, 2800);
+
+  setTimeout(() => {
+    // sparkle burst
+    const emojis = ['✨','💜','🌟','💕','⭐','🎀','💎'];
+    for (let i = 0; i < 14; i++) {
+      const sp = document.createElement('div');
+      sp.className = 'sparkle';
+      sp.textContent = emojis[i % emojis.length];
+      sp.style.cssText = `
+        left:${20 + Math.random()*60}%;
+        top:${20 + Math.random()*60}%;
+        animation-delay:${Math.random()*0.5}s;
+        font-size:${14 + Math.random()*16}px;
+      `;
+      sparkles.appendChild(sp);
+    }
+    msg.textContent = '🎉 Your bracelet is packed & ready!';
+    proceed.style.display = 'block';
+  }, 3800);
+}
+
+function closeOverlay() {
+  document.getElementById('pack-overlay').classList.remove('show');
+}
+
+function proceedToCheckout() {
+  closeOverlay();
+  showToast('Redirecting to checkout... 🛍️');
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+    background:var(--purple); color:white; padding:12px 24px;
+    border-radius:30px; font-size:14px; font-weight:500;
+    z-index:20000; box-shadow:0 8px 24px rgba(124,77,189,0.4);
+    animation:toastIn 0.3s ease both;
+  `;
+  const style = document.createElement('style');
+  style.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+  document.head.appendChild(style);
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.3s'; setTimeout(()=>t.remove(),300); }, 2500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+renderBeadsGrid();
+renderCharms();
+renderStrings();
+renderColorDots();
+updateAll();
+</script>
+</body>
+</html>
